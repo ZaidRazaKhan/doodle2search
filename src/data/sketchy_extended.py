@@ -27,19 +27,21 @@ def Sketchy_Extended(args, transform='None'):
     np.random.seed(args.seed)
 
     # Create the class embeddings
-    if os.path.isfile('./data/semantic_labels_sketchy.npy'):
-        class_emb = np.load('./data/semantic_labels_sketchy.npy')  #../data/semantic_labels_sketchy.npy
-        with open("./data/vocab_sketchy.pkl", "rb") as input_file:
+    if os.path.isfile('./semantic_labels_sketchy.npy'):
+        class_emb = np.load('./semantic_labels_sketchy.npy')  #../data/semantic_labels_sketchy.npy
+        with open("./vocab_sketchy.pkl", "rb") as input_file:
             vocab = pickle.load(input_file)
     else:
         class_emb = create_class_embeddings(list_class, args.dataset)
         vocab = list_class
 
     # Read test classes
-    with open("./data/zeroshot_classes_sketchy.txt") as fp:              #zeroshot_classes.txt
+    with open("/home/zaid/workspace/doodle2search/src/data/zeroshot_classes_sketchy.txt") as fp:              #zeroshot_classes.txt
         test_class = fp.read().splitlines()
 
     list_class = [x for x in list_class if x not in test_class]
+    print('Ab list class print hoga')
+    print(list_class)
     # Random Shuffle
     random.seed(args.seed)
     shuffled_list_class = list_class
@@ -69,7 +71,7 @@ def Sketchy_Extended(args, transform='None'):
     valid_im_loader = Sketchy_Extended_valid_test(args, valid_class, dicts_class, class_emb, vocab, transform, type_skim='images')
     test_sk_loader = Sketchy_Extended_valid_test(args, test_class, dicts_class, class_emb, vocab, transform, type_skim='sketch')
     test_im_loader = Sketchy_Extended_valid_test(args, test_class, dicts_class, class_emb, vocab, transform, type_skim='images')
-
+    
     return train_loader, [valid_sk_loader, valid_im_loader], [test_sk_loader, test_im_loader], dicts_class
 
 
@@ -83,10 +85,13 @@ class Sketchy_Extended_valid_test(data.Dataset):
         self.vocab = vocab
 
         if type_skim == 'images':
+            # print(args.data_path+" images hai")
             self.dir_file = os.path.join(args.data_path, 'EXTEND_image_sketchy')
+            print(self.dir_file)
         elif type_skim == 'sketch':
             sub_dir = 'tx_000000000000'
             self.dir_file = os.path.join(args.data_path, 'Sketchy', 'sketch', sub_dir)
+            print(self.dir_file)
         else:
             NameError(type_skim + ' not implemented!')
 
