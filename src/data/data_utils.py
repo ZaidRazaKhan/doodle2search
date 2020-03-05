@@ -55,7 +55,10 @@ def get_file_list(dir_skim, class_list, skim='sketch'):
 
 def get_random_file_from_path(file_path):
     _ext='*.jpg'
+    # print(file_path)
     f_list = glob.glob(os.path.join(file_path, _ext))
+    # print(f_list)
+    # print(np.random.choice(f_list,1)[0])
     return np.random.choice(f_list,1)[0]
 
 

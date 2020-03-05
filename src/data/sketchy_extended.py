@@ -40,8 +40,8 @@ def Sketchy_Extended(args, transform='None'):
         test_class = fp.read().splitlines()
 
     list_class = [x for x in list_class if x not in test_class]
-    print('Ab list class print hoga')
-    print(list_class)
+    # print('Ab list class print hoga')
+    # print(list_class)
     # Random Shuffle
     random.seed(args.seed)
     shuffled_list_class = list_class
@@ -128,7 +128,8 @@ class Sketchy_Extended_train(data.Dataset):
         self.sub_dirs = ['tx_000000000000', 'tx_000100000000', 'tx_000000000010', 'tx_000000000110', 'tx_000000001110',
                          'tx_000000001010']
         
-        self.dir_image = os.path.join(args.data_path, 'EXTEND_image_sketchy')
+        # self.dir_image = os.path.join(args.data_path, 'EXTEND_image_sketchy')
+        self.dir_image = os.path.join(args.data_path, 'Sketchy','photo', 'tx_000000000000')
         self.dir_sketch = os.path.join(args.data_path, 'Sketchy', 'sketch')
         self.loader = default_image_loader
         self.fnames_sketch, self.cls_sketch = get_file_list(os.path.join(self.dir_sketch, self.sub_dirs[0]), self.train_class, 'sketch')
