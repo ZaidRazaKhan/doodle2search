@@ -36,7 +36,7 @@ def Sketchy_Extended(args, transform='None'):
         vocab = list_class
 
     # Read test classes
-    with open("/home/zaid/workspace/doodle2search/src/data/zeroshot_classes_sketchy.txt") as fp:              #zeroshot_classes.txt
+    with open("/DATA/khan.2/doodle2search/src/data/zeroshot_classes_sketchy.txt") as fp:              #zeroshot_classes.txt
         test_class = fp.read().splitlines()
 
     list_class = [x for x in list_class if x not in test_class]
@@ -48,8 +48,8 @@ def Sketchy_Extended(args, transform='None'):
     random.shuffle(shuffled_list_class)
 
     # Dividing the classes
-    train_class = shuffled_list_class[:int(0.9 * len(shuffled_list_class))]
-    valid_class = shuffled_list_class[int(0.9 * len(shuffled_list_class)):]
+    train_class = shuffled_list_class[:int(0.8 * len(shuffled_list_class))]
+    valid_class = shuffled_list_class[int(0.8 * len(shuffled_list_class)):]
 
     if args.exp_idf is not None:
         if args.save is None:
@@ -86,12 +86,13 @@ class Sketchy_Extended_valid_test(data.Dataset):
 
         if type_skim == 'images':
             # print(args.data_path+" images hai")
-            self.dir_file = os.path.join(args.data_path, 'EXTEND_image_sketchy')
-            print(self.dir_file)
+            self.dir_file = os.path.join(args.data_path, 'Sketchy','photo', 'tx_000000000000')
+            # self.dir_file = os.path.join(args.data_path, 'EXTEND_image_sketchy')
+            # print(self.dir_file)
         elif type_skim == 'sketch':
             sub_dir = 'tx_000000000000'
             self.dir_file = os.path.join(args.data_path, 'Sketchy', 'sketch', sub_dir)
-            print(self.dir_file)
+            # print(self.dir_file)
         else:
             NameError(type_skim + ' not implemented!')
 
@@ -124,9 +125,9 @@ class Sketchy_Extended_train(data.Dataset):
         self.dicts_class = dicts_class
         self.word2vec = class_emb
         self.vocab = vocab
+        # self.sub_dirs = ['tx_000000000000', 'tx_000000000010', 'tx_000000000110']
 
-        self.sub_dirs = ['tx_000000000000', 'tx_000100000000', 'tx_000000000010', 'tx_000000000110', 'tx_000000001110',
-                         'tx_000000001010']
+        self.sub_dirs = ['tx_000000000000', 'tx_000100000000', 'tx_000000000010', 'tx_000000000110', 'tx_000000001110', 'tx_000000001010']
         
         # self.dir_image = os.path.join(args.data_path, 'EXTEND_image_sketchy')
         self.dir_image = os.path.join(args.data_path, 'Sketchy','photo', 'tx_000000000000')
@@ -139,6 +140,7 @@ class Sketchy_Extended_train(data.Dataset):
     def __getitem__(self, index):
         # Read sketch
         random_sub_dir_sk = np.random.choice(self.sub_dirs, 1)[0]
+        # print(random_sub_dir_sk)
         fname = os.path.join(self.dir_sketch, random_sub_dir_sk, self.cls_sketch[index], self.fnames_sketch[index])
         sketch = self.loader(fname)
         sketch = self.transform(sketch)
