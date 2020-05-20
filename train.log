@@ -1,0 +1,151 @@
+Parameters:	Namespace(attn=False, batch_size=10, data_path='./dataset/rendered_256x256/256x256/', dataset='sketchy_extend', decay=0.0005, early_stop=10, emb_size=256, epochs=100, exp_idf='attempt1', gamma=0.1, grl_lambda=0.5, learning_rate=0.0001, load=None, log='./logs/', log_interval=20, momentum=0.9, ngpu=4, nopretrain=True, plot=False, prefetch=3, save='./', schedule=[], seed=42, w_domain=1, w_semantic=1, w_triplet=1)
+Initialize logger
+Log dir:	./checkpoint/attempt1/1_run-batchSize_10/
+airplane
+alarm_clock
+ant
+ape
+apple
+armor
+banana
+bat
+bear
+bee
+beetle
+bell
+bench
+bicycle
+blimp
+bread
+butterfly
+cabin
+camel
+candle
+cannon
+castle
+cat
+chair
+chicken
+church
+couch
+cow
+crab
+crocodilian
+cup
+deer
+dog
+dolphin
+door
+duck
+elephant
+eyeglasses
+fan
+fish
+flower
+frog
+geyser
+giraffe
+guitar
+hamburger
+hammer
+harp
+hat
+hedgehog
+helicopter
+hermit_crab
+horse
+hotdog
+hourglass
+jellyfish
+kangaroo
+knife
+lion
+lizard
+lobster
+motorcycle
+mouse
+mushroom
+owl
+parrot
+pear
+penguin
+piano
+pickup_truck
+pig
+pineapple
+pistol
+pizza
+pretzel
+rabbit
+raccoon
+racket
+ray
+rhinoceros
+rifle
+rocket
+sailboat
+saw
+saxophone
+scissors
+scorpion
+seagull
+seal
+sea_turtle
+shark
+sheep
+shoe
+skyscraper
+snail
+snake
+songbird
+spider
+spoon
+squirrel
+starfish
+strawberry
+swan
+sword
+table
+tank
+teapot
+teddy_bear
+tiger
+tree
+trumpet
+turtle
+umbrella
+violin
+volcano
+wheelchair
+windmill
+window
+zebra
+Create trainable model
+	* Loading a pretrained model
+Loss, Optimizer & Evaluation
+Check CUDA
+	* Data Parallel
+	* CUDA
+***Train***
+Traceback (most recent call last):
+  File "src/train.py", line 292, in <module>
+    main()
+  File "src/train.py", line 175, in main
+    loss_train, loss_sem, loss_dom, loss_spa = train(train_loader, [im_net, sk_net], optimizer, args.cuda, criterion, epoch, args.log_interval)
+  File "src/train.py", line 64, in train
+    im_feat, _ = im_net(im) # Image encoding and projection to semantic space
+  File "/DATA/khan.2/doodle2search/venv/lib/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/DATA/khan.2/doodle2search/venv/lib/python3.7/site-packages/torch/nn/parallel/data_parallel.py", line 144, in forward
+    return self.gather(outputs, self.output_device)
+  File "/DATA/khan.2/doodle2search/venv/lib/python3.7/site-packages/torch/nn/parallel/data_parallel.py", line 156, in gather
+    return gather(outputs, output_device, dim=self.dim)
+  File "/DATA/khan.2/doodle2search/venv/lib/python3.7/site-packages/torch/nn/parallel/scatter_gather.py", line 67, in gather
+    return gather_map(outputs)
+  File "/DATA/khan.2/doodle2search/venv/lib/python3.7/site-packages/torch/nn/parallel/scatter_gather.py", line 62, in gather_map
+    return type(out)(map(gather_map, zip(*outputs)))
+  File "/DATA/khan.2/doodle2search/venv/lib/python3.7/site-packages/torch/nn/parallel/scatter_gather.py", line 54, in gather_map
+    return Gather.apply(target_device, dim, *outputs)
+  File "/DATA/khan.2/doodle2search/venv/lib/python3.7/site-packages/torch/nn/parallel/_functions.py", line 54, in forward
+    assert all(map(lambda i: i.is_cuda, inputs))
+AssertionError
