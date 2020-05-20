@@ -21,7 +21,6 @@ from utils import load_checkpoint, rec, precak
 from models.encoder import EncoderCNN
 from data.generator_train import load_data
 
-
 def test(im_loader, sk_loader, model, args, dict_class=None):
     # Start counting time
     end = time.time()
@@ -33,7 +32,10 @@ def test(im_loader, sk_loader, model, args, dict_class=None):
     torch.set_grad_enabled(False)
     acc_fnames_im = []
     acc_fnames_sk = []
-
+    acc_im_em = None 
+    acc_cls_im = None
+    acc_sk_em = None
+    acc_cls_sk = None
     for i, (im, fname, target) in enumerate(im_loader):
         # Data to Variable
         if args.cuda:
@@ -187,6 +189,8 @@ def main():
     print('Check CUDA')
     if args.cuda and args.ngpu > 1:
         print('\t* Data Parallel **NOT TESTED**')
+        # im_net = nn.DataParallel(im_net, device_ids=[1,2,3,4])
+        # sk_net = nn.DataParallel(sk_net, device_ids=[1,2,3,4])
         im_net = nn.DataParallel(im_net, device_ids=list(range(args.ngpu)))
         sk_net = nn.DataParallel(sk_net, device_ids=list(range(args.ngpu)))
 
@@ -202,7 +206,7 @@ def main():
                                                                     mean_ap=checkpoint['best_map']))
 
     print('***Valid***')
-    #map_valid = test(valid_im_loader, valid_sk_loader, [im_net, sk_net], args, dict_class)
+    map_valid = test(valid_im_loader, valid_sk_loader, [im_net, sk_net], args, dict_class)
     print('***Test***')
     map_test = test(test_im_loader, test_sk_loader, [im_net, sk_net], args, dict_class)
 
@@ -210,7 +214,7 @@ def main():
 if __name__ == '__main__':
     # Parse options
     args = Options(test=True).parse()
-    print('Parameters:\t' + str(args))
+    # print('Parameters:\t' + str(args))
 
     # Check cuda & Set random seed
     args.cuda = args.ngpu > 0 and torch.cuda.is_available()
