@@ -94,15 +94,13 @@ def train(data_loader, model, optimizer, cuda, criterion, epoch, log_int=20):
 
 
 def main():
-    print('Prepare data')
     transform = transforms.Compose([transforms.ToTensor()])
-    train_data, [valid_sk_data, valid_im_data], [test_sk_data, test_im_data], dict_class = load_data(args, transform)    
+    train_data, [valid_sk_data, valid_im_data], [test_sk_data, test_im_data], dict_class = load_data(args, transform)
     train_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=args.prefetch, pin_memory=True)
     valid_sk_loader = DataLoader(valid_sk_data, batch_size=3*args.batch_size, num_workers=args.prefetch, pin_memory=True)
     valid_im_loader = DataLoader(valid_im_data, batch_size=3*args.batch_size, num_workers=args.prefetch, pin_memory=True)
     test_sk_loader = DataLoader(test_sk_data, batch_size=3*args.batch_size, num_workers=args.prefetch, pin_memory=True)
     test_im_loader = DataLoader(test_im_data, batch_size=3*args.batch_size, num_workers=args.prefetch, pin_memory=True)
-
     if args.log:
         if args.dataset == 'quickdraw_extend':
             pass
@@ -144,6 +142,9 @@ def main():
     if args.cuda and args.ngpu > 1:
         print('\t* Data Parallel')
         im_net = nn.DataParallel(im_net, device_ids=list(range(args.ngpu)))
+        # im_net = nn.DataParallel(im_net, device_ids=[1,2,3,4])
+        # sk_net = nn.DataParallel(sk_net, device_ids=[1,2,3,4])
+        # criterion = nn.DataParallel(criterion, device_ids=[1,2,3,4])
         sk_net = nn.DataParallel(sk_net, device_ids=list(range(args.ngpu)))
         criterion = nn.DataParallel(criterion, device_ids=list(range(args.ngpu)))
 
@@ -255,10 +256,14 @@ if __name__ == '__main__':
     # Parse options
     args = Options().parse()
     print('Parameters:\t' + str(args))
+
     
     # Check cuda & Set random seed
+    # print(torch.cuda.is_available())
+    # args.cuda = True
     args.cuda = args.ngpu > 0 and torch.cuda.is_available()
-
+    # args.cuda = torch.device('cuda:5') 
+    # os.environ['CUDA_VISIBLE_DEVICES'] ="5,1,2,3,4"
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     if args.cuda:
