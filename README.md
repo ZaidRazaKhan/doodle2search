@@ -84,7 +84,7 @@ bash download_datasets.sh
 ### Train
 Finally we are ready to train. Magical words are:
 ```bash
-python3 src/train.py sketchy_extended --data_path <mention the data path of the dataset>
+python3 src/train.py sketchy_extend --data_path <mention the data path of the dataset>
 ```
 The first argument is the dataset name, which you can replace it with tuberlin_extend or quickdraw_extend.
 You can check the ``options.py`` for changing a lot of the options such dimension size, different models, hyperparameters, etc.
