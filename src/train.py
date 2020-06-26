@@ -10,7 +10,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import torch.nn as nn
-
+from torch.autograd import Variable
 import glob
 import numpy as np
 import time
@@ -54,8 +54,10 @@ def train(data_loader, model, optimizer, cuda, criterion, epoch, log_int=20):
     end = time.time()
     for i, (sk, im, im_neg, w2v, _, _) in enumerate(data_loader):
         # Prepare input data
+        im, im_neg, sk, w2v = im.to('cuda:0'), im_neg.to('cuda:0'), sk.to('cuda:0'), w2v.to('cuda:0')
         if cuda:
-            im, im_neg, sk, w2v = im.cuda(), im_neg.cuda(), sk.cuda(), w2v.cuda()
+            # im, im_neg, sk, w2v = im.cuda(), im_neg.cuda(), sk.cuda(), w2v.cuda()
+            pass
         
         optimizer.zero_grad()
         bs = im.size(0)
@@ -71,7 +73,8 @@ def train(data_loader, model, optimizer, cuda, criterion, epoch, log_int=20):
         sk_feat, _ = sk_net(sk) # Sketch encoding and projection to semantic space
         
         # LOSS
-        loss, loss_sem, loss_dom, loss_spa = criterion(im_feat, sk_feat, w2v, im_feat_neg, i)
+        loss, loss_sem, loss_dom, loss_spa = criterion.module(im_feat, sk_feat, w2v, im_feat_neg, i)
+        # loss, loss_sem, loss_dom, loss_spa = criterion(im_feat, sk_feat, w2v, im_feat_neg, i)
         
         # Gradiensts and update
         loss.backward()
@@ -135,23 +138,33 @@ def main():
 
     print('Loss, Optimizer & Evaluation')
     criterion = DetangledJoinDomainLoss(emb_size=args.emb_size, w_sem=args.w_semantic, w_dom=args.w_domain, w_spa=args.w_triplet, lambd=args.grl_lambda)
-    criterion.train()
-    optimizer = torch.optim.SGD(list(im_net.parameters()) + list(sk_net.parameters()) + list(criterion.parameters()), args.learning_rate, momentum=args.momentum, weight_decay=args.decay, nesterov=True)
+    # criterion.train()
+    # optimizer = torch.optim.SGD(list(im_net.parameters()) + list(sk_net.parameters()) + list(criterion.parameters()), args.learning_rate, momentum=args.momentum, weight_decay=args.decay, nesterov=True)
 
     print('Check CUDA')
     if args.cuda and args.ngpu > 1:
         print('\t* Data Parallel')
         im_net = nn.DataParallel(im_net, device_ids=list(range(args.ngpu)))
-        # im_net = nn.DataParallel(im_net, device_ids=[1,2,3,4])
-        # sk_net = nn.DataParallel(sk_net, device_ids=[1,2,3,4])
-        # criterion = nn.DataParallel(criterion, device_ids=[1,2,3,4])
+
+        # im_net = nn.DistributedDataParallel(im_net, device_ids = list(range(args.ngpu)))
+        # sk_net = nn.DistributedDataParallel(sk_net, device_ids = list(range(args.ngpu)))
+        # criterion = nn.DistributedDataParallel(criterion, device_ids = list(range(args.ngpu)))
+
         sk_net = nn.DataParallel(sk_net, device_ids=list(range(args.ngpu)))
         criterion = nn.DataParallel(criterion, device_ids=list(range(args.ngpu)))
 
     if args.cuda:
         print('\t* CUDA')
-        im_net, sk_net = im_net.cuda(), sk_net.cuda()
-        criterion = criterion.cuda()
+        # im_net, sk_net = im_net.cuda(), sk_net.cuda()
+        # criterion = criterion.cuda()
+        im_net, sk_net = im_net.to('cuda:0'), sk_net.to('cuda:0')
+        criterion = criterion.to('cuda:0')
+
+
+    criterion.train()
+    optimizer = torch.optim.SGD(list(im_net.parameters()) + list(sk_net.parameters()) + list(criterion.parameters()), args.learning_rate, momentum=args.momentum, weight_decay=args.decay, nesterov=True)
+
+    print('Check CUDA')
 
     start_epoch = 0
     best_map = 0
