@@ -51,6 +51,9 @@ class EncoderCNN(nn.Module):
         x = self.map(x)
         if not self.attention:
             attn_mask = torch.zeros(7,7)
+            if x.is_cuda:
+                device = x.device
+                attn_mask = attn_mask.to(device)
         return x, attn_mask
 
 
