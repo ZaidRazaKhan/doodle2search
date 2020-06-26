@@ -36,7 +36,7 @@ def Sketchy_Extended(args, transform='None'):
         vocab = list_class
 
     # Read test classes
-    with open("/DATA/khan.2/doodle2search/src/data/zeroshot_classes_sketchy.txt") as fp:              #zeroshot_classes.txt
+    with open("/DATA/khan.2/khan.2/doodle2search/src/data/zeroshot_classes_sketchy.txt") as fp:              #zeroshot_classes.txt
         test_class = fp.read().splitlines()
 
     list_class = [x for x in list_class if x not in test_class]
