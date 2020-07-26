@@ -18,13 +18,13 @@ class Options():
                                      'quickdraw_extend'],
                             help='Choose between (Sketchy).')
         # Model parameters
-        parser.add_argument('--data_path', '-dp', type=str, default='../dataset/', help='Dataset root path.')
+        parser.add_argument('--data_path', '-dp', type=str, default='/DATA/khan.2/khan.2/doodle2search/dataset/', help='Dataset root path.')
         parser.add_argument('--emb_size', type=int, default=256, help='Embedding Size.')
         parser.add_argument('--grl_lambda', type=float, default=0.5, help='Lambda used to normalize the GRL layer.')
         parser.add_argument('--nopretrain', action='store_false', help='Loads a pretrained model (Default: True).')
         # Optimization options
         parser.add_argument('--epochs', '-e', type=int, default=50, help='Number of epochs to train.')
-        parser.add_argument('--batch_size', '-b', type=int, default=40, help='Batch size.')
+        parser.add_argument('--batch_size', '-b', type=int, default=20, help='Batch size.')
         parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4, help='The Learning Rate.')
         parser.add_argument('--momentum', '-m', type=float, default=0.9, help='Momentum.')
         parser.add_argument('--decay', '-d', type=float, default=0.0005, help='Weight decay (L2 penalty).')
